@@ -127,11 +127,80 @@ jupyter lab
 4. **Compare resultados** entre implementação manual vs. bibliotecas
 5. **Modifique parâmetros** para entender o comportamento dos algoritmos
 
-## ✅ Progresso Atual
+## ✅ Progresso Detalhado
 
-- [x] **Configuração do projeto** - Estrutura e ambiente
-- [x] **Fundamentos básicos** - RGB para escala de cinza
-- [ ] **Operações pontuais** - Brilho, contraste, correção gama
-- [ ] **Histogramas** - Equalização e análise
-- [ ] **Filtragem espacial** - Convolução e filtros
-- [ ] *...demais tópicos da ementa*
+### 🏗️ Infraestrutura do Projeto
+- [x] **Estrutura de diretórios** - Organização pedagógica completa
+- [x] **Ambiente conda** - Python 3.9 + dependências
+- [x] **Biblioteca cv_lib** - Pacote personalizado com importações funcionando
+- [x] **Sistema de testes** - Estrutura organizada por tópicos em `/tests/`
+- [x] **Utilitários** - Visualização e datasets centralizados em `/utils/`
+- [x] **Documentação** - README, CLAUDE.md, estrutura navegável
+
+### 1️⃣ Fundamentos de Processamento de Imagens
+
+#### 1.1 Conceitos Básicos ✅
+- [x] **Imagem digital** - Conceitos de amostragem e quantização
+- [x] **Representação NumPy** - Arrays, dtypes, shapes
+
+#### 1.2 Espaços de Cor ✅ 
+- [x] **Modelo RGB** - Compreensão e manipulação
+- [x] **Conversões para escala de cinza** - 7 métodos implementados:
+  - [x] `luminancia/bt601` - Padrão clássico (ITU-R BT.601)  
+  - [x] `bt709` - Padrão HDTV moderno
+  - [x] `media` - Média aritmética simples
+  - [x] `desaturacao` - (max + min) / 2
+  - [x] `canal_r/g/b` - Canais individuais com aplicações específicas
+- [x] **Testes implementados** - Comparação visual e quantitativa
+- [x] **Documentação técnica** - Aplicações práticas de cada método
+
+#### 1.3 Operações Pontuais 🔄 **PRÓXIMO**
+- [ ] **Brilho e contraste** - Transformações lineares
+- [ ] **Correção gama** - Ajuste não-linear
+- [ ] **Normalização** - Padronização de valores
+- [ ] **Operações aritméticas** - Soma, multiplicação entre imagens
+
+#### 1.4 Histogramas
+- [ ] **Cálculo de histogramas** - Distribuição de intensidades
+- [ ] **Equalização** - Melhoria de contraste
+- [ ] **Equalização adaptativa (CLAHE)** - Processamento local
+- [ ] **Especificação de histograma** - Matching
+
+#### 1.5 Filtragem Espacial
+- [ ] **Convolução 2D** - Implementação manual
+- [ ] **Filtros de suavização** - Média, Gaussiano
+- [ ] **Realce de bordas** - Sobel, Prewitt, Laplaciano
+- [ ] **Filtros customizados** - Kernels personalizados
+
+### 2️⃣ Filtragem na Frequência
+- [ ] **Transformada de Fourier** - FFT 2D
+- [ ] **Filtros passa-baixa/alta** - No domínio da frequência
+- [ ] **Filtragem butterworth** - Filtros ideais e práticos
+
+### 3️⃣ Segmentação e Detecção
+- [ ] **Limiarização global** - Otsu
+- [ ] **Limiarização adaptativa** - Métodos locais
+- [ ] **Detecção de bordas** - Canny, Marr-Hildreth
+- [ ] **Transformadas** - Hough para linhas e círculos
+- [ ] **Morfologia matemática** - Erosão, dilatação, abertura, fechamento
+
+### 4️⃣ Características e Descritores
+- [ ] **HOG** - Histogram of Oriented Gradients
+- [ ] **LBP** - Local Binary Patterns
+- [ ] **SIFT/SURF/ORB** - Pontos de interesse
+- [ ] **Momentos** - Descritores de forma
+
+### 5️⃣ Reconhecimento de Padrões
+- [ ] **k-NN** - Classificação por vizinhos
+- [ ] **SVM** - Support Vector Machines
+- [ ] **k-means** - Agrupamento
+- [ ] **PCA** - Redução de dimensionalidade
+
+### 6️⃣ Deep Learning
+- [ ] **CNNs básicas** - LeNet, arquiteturas fundamentais
+- [ ] **Transfer Learning** - Modelos pré-treinados
+- [ ] **Detecção de objetos** - YOLO, R-CNN
+- [ ] **Segmentação** - U-Net, masks
+
+---
+**📊 Status Geral: 15/60+ funcionalidades implementadas (~25% da ementa)**
