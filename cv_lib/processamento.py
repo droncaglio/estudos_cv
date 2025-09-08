@@ -307,42 +307,73 @@ def rgb_para_hsv(imagem_rgb):
         - Segmentacao baseada em cor
         - Deteccao de objetos coloridos
         - Interfaces de selecao de cor
+        
+    ALGORITMO DETALHADO DO HUE (MATIZ):
+    A roda de cores HSV e dividida em 6 setores de 60 graus cada:
+    - Setor 0: 0°-60°   (Vermelho -> Amarelo)
+    - Setor 1: 60°-120° (Amarelo -> Verde) 
+    - Setor 2: 120°-180°(Verde -> Ciano)
+    - Setor 3: 180°-240°(Ciano -> Azul)
+    - Setor 4: 240°-300°(Azul -> Magenta)
+    - Setor 5: 300°-360°(Magenta -> Vermelho)
     """
     altura, largura, _ = imagem_rgb.shape
     imagem_hsv = np.zeros((altura, largura, 3), dtype=np.float64)
 
     for y in range(altura):
         for x in range(largura):
+            # Normaliza RGB para [0,1] para facilitar calculos
             r, g, b = imagem_rgb[y, x, 0] / 255.0, imagem_rgb[y, x, 1] / 255.0, imagem_rgb[y, x, 2] / 255.0
             
-            # Calcula max, min e delta
-            max_val = max(r, g, b)
-            min_val = min(r, g, b)
-            delta = max_val - min_val
+            # PASSO 1: Encontra valores maximo, minimo e diferenca (delta)
+            max_val = max(r, g, b)  # Componente com maior intensidade
+            min_val = min(r, g, b)  # Componente com menor intensidade
+            delta = max_val - min_val  # Diferenca = "intensidade da cor"
             
-            # Value (Brilho)
-            v = max_val
+            # PASSO 2: Calcula VALUE (brilho) - simplesmente o valor maximo
+            v = max_val  # Value = quao "brilhante" e a cor (0-1)
             
-            # Saturation (Saturacao)
+            # PASSO 3: Calcula SATURATION (saturacao) - quao "pura" e a cor
             if max_val == 0:
+                # Se max_val = 0, a cor e preta (sem saturacao)
                 s = 0
             else:
+                # Saturacao = diferenca / brilho
+                # Se delta=0, cor e acinzentada (sem saturacao)  
+                # Se delta=max_val, cor e "pura" (saturacao maxima)
                 s = delta / max_val
             
-            # Hue (Matiz)
+            # PASSO 4: Calcula HUE (matiz) - a cor em si na roda de cores
             if delta == 0:
-                h = 0  # Cor acinzentada
+                # Se nao ha diferenca entre RGB, a cor e acinzentada (sem matiz definido)
+                h = 0
+                
             elif max_val == r:
-                h = 60 * (((g - b) / delta) % 6)
+                # VERMELHO e dominante - estamos nos setores 0° ou 5° da roda
+                # Formula: posicao dentro do setor baseada na diferenca G-B
+                posicao_no_setor = (g - b) / delta
+                
+                # Multiplica por 60° (tamanho do setor) e usa % 6 para lidar com valores negativos
+                # % 6 garante que valores negativos "deem a volta" na roda (ex: -1 vira 5)
+                h = 60 * (posicao_no_setor % 6)
+                
             elif max_val == g:
-                h = 60 * ((b - r) / delta + 2)
+                # VERDE e dominante - estamos no setor 1° (60°-120°)
+                # +2 = pula 2 setores (120° de offset)
+                posicao_no_setor = (b - r) / delta  # Posicao baseada em B-R
+                h = 60 * (posicao_no_setor + 2)     # +2 setores = +120°
+                
             elif max_val == b:
-                h = 60 * ((r - g) / delta + 4)
+                # AZUL e dominante - estamos no setor 2° (240°-300°)  
+                # +4 = pula 4 setores (240° de offset)
+                posicao_no_setor = (r - g) / delta  # Posicao baseada em R-G  
+                h = 60 * (posicao_no_setor + 4)     # +4 setores = +240°
             
-            # Converte para ranges convencionais
-            h = h / 2  # OpenCV usa H em [0-179] para caber em uint8
-            s = s * 255  # S em [0-255]
-            v = v * 255  # V em [0-255]
+            # PASSO 5: Converte para ranges convencionais de armazenamento
+            # OpenCV usa H em [0-179] para caber em uint8 (180 valores)
+            h = h / 2        # Divide por 2: [0-360°] -> [0-180]
+            s = s * 255      # S: [0-1] -> [0-255]  
+            v = v * 255      # V: [0-1] -> [0-255]
             
             imagem_hsv[y, x] = [h, s, v]
 
@@ -388,63 +419,161 @@ def hsv_para_rgb(imagem_hsv):
 
 def rgb_para_lab(imagem_rgb):
     """
-    Converte RGB para espaco de cor Lab (L*a*b*) via XYZ.
+    Converte RGB para espaco de cor Lab (L*a*b*) via XYZ - PROCESSO EM 3 ETAPAS.
     
     Lab e perceptualmente uniforme - distancias numericas correspondem 
     a diferencas visuais percebidas pelo olho humano.
     
-    - L: Lightness (Luminosidade) - 0 (preto) a 100 (branco)
+    - L: Lightness (Luminosidade) - 0 (preto absoluto) a 100 (branco absoluto)
     - a: Eixo verde-vermelho - negativo=verde, positivo=vermelho
     - b: Eixo azul-amarelo - negativo=azul, positivo=amarelo
     
+    PROCESSO DE CONVERSAO (3 ETAPAS OBRIGATORIAS):
+    RGB → Linear RGB → XYZ → Lab
+    
+    ETAPA 1: RGB (sRGB) → Linear RGB
+    - Remove "gamma correction" aplicada pelos monitores
+    - sRGB usa gamma ≈ 2.2 para otimizar percepcao visual
+    - Precisamos reverter isso para calculos corretos
+    
+    ETAPA 2: Linear RGB → XYZ  
+    - XYZ e um espaco "device-independent" (independe do dispositivo)
+    - Usa matriz padrao sRGB D65 (luz do dia)
+    - X,Y,Z representam estimulos dos cones do olho humano
+    
+    ETAPA 3: XYZ → Lab
+    - Aplica funcoes nao-lineares baseadas na percepcao humana
+    - Lab e "perceptualmente uniforme" (distancias = diferencas visuais)
+    - Usa illuminant D65 como referencia (luz branca padrao)
+    
     Aplicacoes:
         - Correcao de cor profissional
-        - Comparacao perceptual de cores
-        - Delta E (diferenca de cor percebida)
+        - Comparacao perceptual de cores (Delta E)
         - Impressao e reproducao de cores
         - Segmentacao robusta por cor
     """
-    # Primeiro converte RGB -> XYZ
     altura, largura, _ = imagem_rgb.shape
     imagem_lab = np.zeros((altura, largura, 3), dtype=np.float64)
 
     for y in range(altura):
         for x in range(largura):
+            # Normaliza RGB de [0-255] para [0-1]
             r, g, b = imagem_rgb[y, x, 0] / 255.0, imagem_rgb[y, x, 1] / 255.0, imagem_rgb[y, x, 2] / 255.0
             
-            # Gamma correction (sRGB -> linear RGB)
-            def gamma_correction(c):
-                return c / 12.92 if c <= 0.04045 else pow((c + 0.055) / 1.055, 2.4)
+            # =====================================================================
+            # ETAPA 1: sRGB -> Linear RGB (Remove gamma correction)
+            # =====================================================================
+            # Monitores aplicam "gamma correction" (~2.2) para otimizar percepcao
+            # Precisamos reverter isso para calculos colorimetricos corretos
             
-            r, g, b = gamma_correction(r), gamma_correction(g), gamma_correction(b)
+            def gamma_correction_reversa(componente):
+                """
+                Reverte a gamma correction do sRGB para obter RGB linear.
+                
+                sRGB usa gamma aproximado de 2.2, mas com uma curva especial:
+                - Valores baixos (<=0.04045): divisao linear simples
+                - Valores altos (>0.04045): funcao exponencial
+                
+                Por que 0.04045? Ponto onde as duas curvas se encontram suavemente.
+                Por que 12.92? Inclinacao da parte linear (1/2.4 ≈ 0.4167).
+                Por que 2.4? Gamma real do sRGB (nao exatamente 2.2).
+                """
+                if componente <= 0.04045:
+                    # Regiao linear (sombras muito escuras)
+                    return componente / 12.92
+                else:
+                    # Regiao exponencial (maior parte dos valores)
+                    return pow((componente + 0.055) / 1.055, 2.4)
             
-            # Matriz de transformacao RGB -> XYZ (sRGB D65)
-            X = r * 0.4124564 + g * 0.3575761 + b * 0.1804375
-            Y = r * 0.2126729 + g * 0.7151522 + b * 0.0721750
-            Z = r * 0.0193339 + g * 0.1191920 + b * 0.9503041
+            # Aplica a remocao de gamma em cada canal
+            r_linear = gamma_correction_reversa(r)
+            g_linear = gamma_correction_reversa(g) 
+            b_linear = gamma_correction_reversa(b)
             
-            # Normaliza com illuminant D65
-            X = X / 0.95047
-            Y = Y / 1.00000  
-            Z = Z / 1.08883
+            # =====================================================================
+            # ETAPA 2: Linear RGB -> XYZ (Transformacao matricial)
+            # =====================================================================
+            # XYZ e um espaco "device-independent" baseado na CIE (1931)
+            # Representa como os cones L,M,S do olho humano respondem a luz
             
-            # Converte XYZ -> Lab
-            def xyz_to_lab_component(t):
-                return pow(t, 1/3) if t > 0.008856 else (7.787 * t + 16/116)
+            # Matriz de transformacao sRGB D65 -> XYZ (padrao internacional)
+            # Valores derivados das cromaticidades do sRGB e illuminant D65
+            # Cada linha corresponde a um componente XYZ
             
-            fx = xyz_to_lab_component(X)
-            fy = xyz_to_lab_component(Y)
-            fz = xyz_to_lab_component(Z)
+            # X: estimulo dos cones L (long wavelength - vermelhos)  
+            X = r_linear * 0.4124564 + g_linear * 0.3575761 + b_linear * 0.1804375
             
-            L = 116 * fy - 16  # Lightness [0-100]
-            a = 500 * (fx - fy)  # Green-Red [-128 to +127]
-            b_lab = 200 * (fy - fz)  # Blue-Yellow [-128 to +127]
+            # Y: estimulo dos cones M (medium wavelength - verdes) + luminancia
+            Y = r_linear * 0.2126729 + g_linear * 0.7151522 + b_linear * 0.0721750  
             
-            # Converte para ranges uint8 convencionais
-            L = L * 255 / 100  # L: [0-255]
-            a = (a + 128)      # a: [0-255]
-            b_lab = (b_lab + 128)  # b: [0-255]
+            # Z: estimulo dos cones S (short wavelength - azuis)
+            Z = r_linear * 0.0193339 + g_linear * 0.1191920 + b_linear * 0.9503041
             
-            imagem_lab[y, x] = [L, a, b_lab]
+            # =====================================================================
+            # ETAPA 2.5: Normalizacao com White Point D65 
+            # =====================================================================
+            # D65 = illuminant padrao (luz do dia a 6500K)
+            # Normalizamos XYZ dividindo pelos valores do branco de referencia
+            # Isso garante que branco puro (255,255,255) vire L=100 no Lab
+            
+            X_normalizado = X / 0.95047  # X do white point D65
+            Y_normalizado = Y / 1.00000  # Y do white point D65 (sempre 1.0)
+            Z_normalizado = Z / 1.08883  # Z do white point D65
+            
+            # =====================================================================
+            # ETAPA 3: XYZ -> Lab (Funcoes nao-lineares perceptuais)
+            # =====================================================================
+            # Lab usa funcoes cubicas/lineares para modelar percepcao humana
+            # O olho nao responde linearmente a luz - precisa de curvas especiais
+            
+            def xyz_para_lab_componente(valor_xyz_normalizado):
+                """
+                Aplica a funcao nao-linear XYZ->Lab baseada na percepcao humana.
+                
+                Por que 0.008856? Ponto onde curva cubica encontra reta linear.
+                Por que 1/3? Curva cubica modela bem a percepcao de luminancia.
+                Por que 7.787? Inclinacao da parte linear.
+                Por que 16/116? Offset para conectar suavemente as duas curvas.
+                
+                Essas constantes foram determinadas experimentalmente pela CIE
+                para melhor modelar como o olho humano percebe diferencas.
+                """
+                if valor_xyz_normalizado > 0.008856:
+                    # Regiao cubica (maior parte dos valores)
+                    return pow(valor_xyz_normalizado, 1/3)
+                else:
+                    # Regiao linear (sombras muito escuras)
+                    return (7.787 * valor_xyz_normalizado + 16/116)
+            
+            # Aplica transformacao nao-linear em cada componente XYZ
+            fx = xyz_para_lab_componente(X_normalizado)
+            fy = xyz_para_lab_componente(Y_normalizado) 
+            fz = xyz_para_lab_componente(Z_normalizado)
+            
+            # Calcula componentes finais do Lab
+            # L: Lightness (luminosidade perceptual)
+            L = 116 * fy - 16  # Range: [0-100] teorico
+            
+            # a: Eixo verde-vermelho (oponente)
+            a = 500 * (fx - fy)  # Range: aproximadamente [-128 a +127]
+            
+            # b: Eixo azul-amarelo (oponente)  
+            b_lab = 200 * (fy - fz)  # Range: aproximadamente [-128 a +127]
+            
+            # Por que 116, 500, 200? Constantes ajustadas para:
+            # - L cobrir [0-100] para branco-preto
+            # - a,b cobrirem faixas simetricas para cores oponentes
+            # - Manter uniformidade perceptual
+            
+            # =====================================================================
+            # ETAPA 4: Conversao para ranges uint8 convencionais 
+            # =====================================================================
+            # Precisamos mapear os ranges teoricos para [0-255] para armazenamento
+            
+            L_final = L * 255 / 100     # [0-100] -> [0-255]
+            a_final = a + 128           # [-128,+127] -> [0-255] (centraliza em 128)  
+            b_final = b_lab + 128       # [-128,+127] -> [0-255] (centraliza em 128)
+            
+            imagem_lab[y, x] = [L_final, a_final, b_final]
 
     return np.clip(imagem_lab, 0, 255).astype(np.uint8)
