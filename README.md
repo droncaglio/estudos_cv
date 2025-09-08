@@ -90,7 +90,10 @@ estudos_cv/
   - Implementações manuais evitando "caixas-pretas"
 
 - **`notebooks/`**: **Diário de laboratório acadêmico**
-  - Cada notebook = um tópico da ementa
+  - Cada notebook = um tópico específico da ementa
+  - **01-Conceitos_Basicos_Imagem_Digital.ipynb**: Fundamentos de imagem digital
+  - **02-Espacos_de_Cor.ipynb**: Modelos de cor e conversões
+  - **03-Operacoes_Pontuais.ipynb**: Transformações pixel por pixel
   - Estrutura pedagógica: **Teoria (Markdown) → Implementação → Experimentação**
   - Visualizações e comparações de resultados
   - Explicações conceituais detalhadas
@@ -121,11 +124,17 @@ jupyter lab
 
 ### 📖 Como Estudar
 
-1. **Explore os notebooks em ordem sequencial**
-2. **Leia as explicações teóricas** (células Markdown) antes do código
-3. **Execute e experimente** com o código implementado
-4. **Compare resultados** entre implementação manual vs. bibliotecas
-5. **Modifique parâmetros** para entender o comportamento dos algoritmos
+#### 🗂️ **Sequência Recomendada de Notebooks**
+1. **[01-Conceitos_Basicos_Imagem_Digital.ipynb](notebooks/01-Conceitos_Basicos_Imagem_Digital.ipynb)** - Fundamentos essenciais
+2. **[02-Espacos_de_Cor.ipynb](notebooks/02-Espacos_de_Cor.ipynb)** - Modelos de cor e conversões
+3. **[03-Operacoes_Pontuais.ipynb](notebooks/03-Operacoes_Pontuais.ipynb)** - Transformações de pixels
+
+#### 🎯 **Metodologia de Estudo**
+1. **Leia as explicações teóricas** (células Markdown) antes do código
+2. **Execute célula por célula** para entender cada conceito
+3. **Experimente com parâmetros** - mude valores e observe resultados
+4. **Compare implementações** - manual vs. bibliotecas quando aplicável
+5. **Visualize resultados** - analise gráficos e histogramas gerados
 
 ## ✅ Progresso Detalhado
 
@@ -139,11 +148,13 @@ jupyter lab
 
 ### 1️⃣ Fundamentos de Processamento de Imagens
 
-#### 1.1 Conceitos Básicos ✅
+#### 📔 [01-Conceitos_Basicos_Imagem_Digital.ipynb](notebooks/01-Conceitos_Basicos_Imagem_Digital.ipynb) ✅
 - [x] **Imagem digital** - Conceitos de amostragem e quantização
 - [x] **Representação NumPy** - Arrays, dtypes, shapes
+- [x] **Tipos de dados** - uint8, float32, conversões
+- [x] **Características de imagens** - Dimensões, canais, faixa dinâmica
 
-#### 1.2 Espaços de Cor ✅ 
+#### 📔 [02-Espacos_de_Cor.ipynb](notebooks/02-Espacos_de_Cor.ipynb) ✅
 - [x] **Modelo RGB** - Compreensão e manipulação
 - [x] **Conversões para escala de cinza** - 7 métodos implementados:
   - [x] `luminancia/bt601` - Padrão clássico (ITU-R BT.601)  
@@ -151,14 +162,17 @@ jupyter lab
   - [x] `media` - Média aritmética simples
   - [x] `desaturacao` - (max + min) / 2
   - [x] `canal_r/g/b` - Canais individuais com aplicações específicas
-- [x] **Testes implementados** - Comparação visual e quantitativa
-- [x] **Documentação técnica** - Aplicações práticas de cada método
+- [x] **Espaços de cor avançados** - YCbCr, HSV, Lab
+- [x] **Análises comparativas** - Visual e quantitativa
+- [x] **Aplicações práticas** - Casos de uso de cada método
 
-#### 1.3 Operações Pontuais 🔄 **PRÓXIMO**
-- [ ] **Brilho e contraste** - Transformações lineares
-- [ ] **Correção gama** - Ajuste não-linear
-- [ ] **Normalização** - Padronização de valores
-- [ ] **Operações aritméticas** - Soma, multiplicação entre imagens
+#### 📔 [03-Operacoes_Pontuais.ipynb](notebooks/03-Operacoes_Pontuais.ipynb) ✅
+- [x] **Brilho e contraste** - Transformações lineares
+- [x] **Correção gama** - Transformação power-law
+- [x] **Normalização linear** - Padronização de valores
+- [x] **Operações entre imagens** - Soma, multiplicação, média ponderada
+- [x] **Visualizações** - Curvas de transformação e histogramas
+- [x] **Análise quantitativa** - Estatísticas e comparações
 
 #### 1.4 Histogramas
 - [ ] **Cálculo de histogramas** - Distribuição de intensidades
@@ -203,4 +217,5 @@ jupyter lab
 - [ ] **Segmentação** - U-Net, masks
 
 ---
-**📊 Status Geral: 15/60+ funcionalidades implementadas (~25% da ementa)**
+**📊 Status Geral: 25/60+ funcionalidades implementadas (~42% da ementa básica)**
+**📔 Notebooks Completos: 3/12 planejados (25% da estrutura curricular)**

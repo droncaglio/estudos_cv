@@ -7,7 +7,7 @@ def rgb_para_cinza(imagem_rgb, tipo='luminancia'):
     Converte uma imagem RGB para escala de cinza usando diferentes metodos.
     
     Argumentos:
-    imagem_rgb -- um array NumPy com shape (altura, largura, 3)
+    imagem_rgb -- um array NumPy com shape (altura, largura, 3) ou (altura, largura)
     tipo -- o tipo de conversao:
         'luminancia' ou 'bt601': Formula padrao (0.299*R + 0.587*G + 0.114*B)
         'bt709': Formula HDTV (0.2126*R + 0.7152*G + 0.0722*B) 
@@ -17,7 +17,16 @@ def rgb_para_cinza(imagem_rgb, tipo='luminancia'):
         'canal_g': Apenas canal verde  
         'canal_b': Apenas canal azul
     """
-    altura, largura, _ = imagem_rgb.shape
+    # Verifica se a imagem ja esta em escala de cinza
+    if len(imagem_rgb.shape) == 2:
+        # Ja esta em escala de cinza, retorna uma copia
+        return imagem_rgb.copy().astype(np.uint8)
+    
+    altura, largura, canais = imagem_rgb.shape
+    
+    # Verifica se realmente tem 3 canais
+    if canais != 3:
+        raise ValueError(f"Imagem deve ter 3 canais (RGB), mas tem {canais}")
     imagem_cinza = np.zeros((altura, largura), dtype=np.float64)
 
     for y in range(altura):
