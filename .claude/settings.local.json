@@ -3,7 +3,8 @@
     "allow": [
       "Read(//mnt/e/**)",
       "Bash(python:*)",
-      "mcp__n8n__cv_base"
+      "mcp__n8n__cv_base",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
