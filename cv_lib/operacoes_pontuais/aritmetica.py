@@ -2,28 +2,43 @@
 """
 🧮 Operações Aritméticas entre Imagens
 
-Implementa operações matemáticas pixel-a-pixel entre duas ou mais imagens,
-fundamentais para combinação, comparação e análise de imagens.
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Gonzalez & Woods, Digital Image Processing 4e, Seção 2.6, p.92**
+  "Image multiplication for masking (ROI operations)" e shading correction
+- **Szeliski, Computer Vision 2e, Seção 8.4.4, p.570**
+  "Blending images to compensate for exposure differences"
+- **Gonzalez & Woods, Fig.2.34, p.92**
+  Masking operations: "ROI with 1's in ROI and 0's elsewhere"
+- **Szeliski, Poisson image blending, Eq.8.75-8.77**
+  Advanced blending techniques para composição
 
-Operações Implementadas:
-- Soma: Combinação de imagens, detecção de movimento
-- Subtração: Detecção de diferenças, remoção de fundo  
-- Multiplicação: Aplicação de máscaras, realce seletivo
-- Divisão: Correção de iluminação não-uniforme
-- Média ponderada: Fusão de imagens com pesos diferentes
-- Blending: Combinação suave entre imagens
+🧮 **OPERAÇÕES FUNDAMENTAIS:**
 
-Aplicações Práticas:
-- Subtração de fundo para detecção de movimento
-- Correção de sombreamento em imagens médicas
-- Fusão de múltiplas exposições (HDR)
-- Aplicação de máscaras para processamento seletivo
-- Comparação quantitativa entre imagens
+**1. Adição:** `f(x,y) = g₁(x,y) + g₂(x,y)`
+- **Aplicação**: Combinação de imagens, noise averaging
 
-Referências:
-- Gonzalez & Woods, Digital Image Processing, Sec. 3.4
-- Jain, A.K. (1989). Fundamentals of Digital Image Processing
-- Petrou, M. & Petrou, C. (2010). Image Processing: The Fundamentals
+**2. Subtração:** `f(x,y) = g₁(x,y) - g₂(x,y)`
+- **Aplicação**: Background subtraction, motion detection
+
+**3. Multiplicação:** `f(x,y) = g₁(x,y) × g₂(x,y)`
+- **Aplicação**: Masking (ROI), shading correction (G&W p.92)
+
+**4. Blending:** `f(x,y) = α×g₁(x,y) + (1-α)×g₂(x,y)`
+- **Aplicação**: "Compensate for exposure differences" (Szeliski p.570)
+
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Shading correction**: "Using estimate of shading pattern" (G&W p.92)
+- **ROI operations**: "Multiplying by mask with 1's in ROI" (G&W Fig.2.34)
+- **Exposure compensation**: "Blending to compensate differences" (Szeliski p.570)
+- **Motion detection**: Background subtraction para detecção
+- **HDR imaging**: Multiple exposure fusion
+- **Medical imaging**: Flat-field correction para uniformidade
+
+⚠️ **CONSIDERAÇÕES DE IMPLEMENTAÇÃO:**
+- **Overflow handling**: Clipping necessário para [0,255]
+- **Data type promotion**: Use float64 durante cálculos
+- **Shape compatibility**: Imagens devem ter mesmas dimensões
+- **Feathering**: "High exponent in feathering" para transições (Szeliski)
 """
 
 import numpy as np

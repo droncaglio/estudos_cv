@@ -2,20 +2,30 @@
 """
 🔴🟢🔵 Conversões RGB para Escala de Cinza
 
-Este módulo implementa 7 métodos diferentes de conversão RGB→Cinza,
-cada um otimizado para aplicações específicas.
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Szeliski, Computer Vision 2e, Eq.2.113, p.122**
+  Y'₆₀₁ = 0.299R' + 0.587G' + 0.114B' (BT.601 para SDTV)
+- **Szeliski, Computer Vision 2e, Eq.2.114, p.122**
+  Y'₇₀₉ = 0.2125R' + 0.7154G' + 0.0721B' (BT.709 para HDTV)
+- **ITU-R BT.601**: Standard for Studio Encoding Parameters
+- **ITU-R BT.709**: Parameter Values for HDTV Standards
+- **Poynton, C. (2003). Digital Video and HDTV Algorithms**
 
-Métodos Implementados:
-1. Luminância/BT.601: Padrão clássico baseado na visão humana
-2. BT.709: Padrão HDTV moderno
-3. Média: Simples média aritmética  
-4. Desaturação: Preserva contraste em cores saturadas
-5-7. Canais individuais: R, G, B isolados
+🧮 **FUNDAMENTO MATEMÁTICO:**
+Conversão para luminância baseada na sensibilidade espectral do olho humano:
+- **Verde**: Maior sensibilidade (58.7% BT.601, 71.54% BT.709)
+- **Vermelho**: Sensibilidade média (29.9% BT.601, 21.26% BT.709)
+- **Azul**: Menor sensibilidade (11.4% BT.601, 7.21% BT.709)
 
-Referências:
-- ITU-R BT.601: Standard for Studio Encoding Parameters
-- ITU-R BT.709: Parameter Values for HDTV Standards
-- Poynton, C. (2003). Digital Video and HDTV Algorithms
+🎯 **MÉTODOS IMPLEMENTADOS (7 tipos):**
+1. **Luminância/BT.601**: Padrão clássico SDTV baseado na visão humana
+2. **BT.709**: Padrão HDTV moderno para monitores atuais
+3. **Média**: Simples média aritmética (R+G+B)/3
+4. **Desaturação**: (max+min)/2 - preserva contraste saturado
+5-7. **Canais individuais**: R, G, B isolados para aplicações específicas
+
+⚠️ **NOTA IMPORTANTE:** As fórmulas usam R'G'B' (gamma-comprimido)
+conforme especificado nos padrões ITU, não RGB linear.
 """
 
 import numpy as np
@@ -25,29 +35,37 @@ from ..utils.validacao import validar_imagem_rgb, garantir_uint8
 def rgb_para_cinza(imagem_rgb, tipo='luminancia'):
     """
     Converte uma imagem RGB para escala de cinza usando diferentes métodos.
-    
+
+    📚 **Referências:**
+    - Szeliski, Computer Vision 2e, Eq.2.113-2.114, p.122
+    - ITU-R BT.601/BT.709 Standards
+
+    🧮 **Fórmulas Acadêmicas:**
+    - BT.601: Y' = 0.299R' + 0.587G' + 0.114B' (SDTV)
+    - BT.709: Y' = 0.2126R' + 0.7152G' + 0.0722B' (HDTV)
+
     Args:
         imagem_rgb: Array NumPy com shape (altura, largura, 3) ou (altura, largura)
-        tipo: Método de conversão:
-            'luminancia' ou 'bt601': Fórmula padrão (0.299*R + 0.587*G + 0.114*B)
-            'bt709': Fórmula HDTV (0.2126*R + 0.7152*G + 0.0722*B) 
-            'media': Média aritmética simples
-            'desaturacao': (max + min) / 2
-            'canal_r': Apenas canal vermelho
-            'canal_g': Apenas canal verde  
-            'canal_b': Apenas canal azul
-            
+        tipo: Método de conversão acadêmico:
+            'luminancia'/'bt601': Eq.2.113 Szeliski (SDTV padrão)
+            'bt709': Eq.2.114 Szeliski (HDTV moderno)
+            'media': Média aritmética (R+G+B)/3
+            'desaturacao': (max+min)/2 para contraste saturado
+            'canal_r': Canal vermelho isolado
+            'canal_g': Canal verde isolado
+            'canal_b': Canal azul isolado
+
     Returns:
         np.ndarray: Imagem em escala de cinza (altura, largura) dtype uint8
-        
-    Aplicações por Método:
-        - luminancia/bt601: Processamento geral, compatibilidade
-        - bt709: TV digital, monitores modernos
-        - media: Algoritmos simples, prototipagem
-        - desaturacao: Arte digital, preservar contraste
-        - canal_r: Medicina, detecção de pele
-        - canal_g: Agricultura, visão noturna  
-        - canal_b: Hidrologia, análise atmosférica
+
+    📈 **Aplicações Citadas na Literatura:**
+        - luminancia/bt601: Compatibilidade com sistemas SDTV legados
+        - bt709: TV digital, monitores HD/4K modernos
+        - media: Algoritmos simples, prototipagem rápida
+        - desaturacao: Arte digital, preservação de contraste
+        - canal_r: Medicina (detecção sangue), análise de pele
+        - canal_g: Agricultura (vegetação), visão noturna
+        - canal_b: Hidrologia (água), análise atmosférica
     """
     # Verifica se a imagem já está em escala de cinza
     if len(imagem_rgb.shape) == 2:
@@ -73,10 +91,10 @@ def rgb_para_cinza(imagem_rgb, tipo='luminancia'):
                 valor_cinza = 0.299 * r + 0.587 * g + 0.114 * b
                 
             elif tipo == 'bt709':
-                # ITU-R BT.709 (HDTV): Padrão moderno para TV digital e monitores
-                # Aplicações: Processamento para displays modernos, conteúdo HD/4K
-                # Coeficientes ajustados para fósforos modernos (mais peso no verde: 71.52%)
-                valor_cinza = 0.2126 * r + 0.7152 * g + 0.0722 * b
+                # ITU-R BT.709 (HDTV): Eq.2.114 Szeliski p.122
+                # Aplicações: TV digital, monitores HD/4K modernos
+                # Coeficientes para fósforos modernos: Y'₇₀₉ = 0.2125R' + 0.7154G' + 0.0721B'
+                valor_cinza = 0.2125 * r + 0.7154 * g + 0.0721 * b
                 
             elif tipo == 'media':
                 # Média aritmética simples: Trata todos os canais igualmente
@@ -134,9 +152,9 @@ def obter_pesos_luminancia(tipo='bt601'):
         - Comparações entre padrões
     """
     if tipo in ['bt601', 'luminancia']:
-        return (0.299, 0.587, 0.114)
+        return (0.299, 0.587, 0.114)  # Eq.2.113 Szeliski
     elif tipo == 'bt709':
-        return (0.2126, 0.7152, 0.0722)
+        return (0.2125, 0.7154, 0.0721)  # Eq.2.114 Szeliski
     else:
         raise ValueError(f"Tipo '{tipo}' não reconhecido. Use 'bt601' ou 'bt709'")
 

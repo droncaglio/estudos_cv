@@ -2,24 +2,43 @@
 """
 📊 Normalização de Imagens - Padronização de Valores
 
-Implementa técnicas de normalização para ajustar ranges e distribuições
-de intensidade, fundamentais para:
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Gonzalez & Woods, Digital Image Processing 4e, Eq.3-15, p.142**
+  Histogram equalization transformation para melhorar contraste
+- **Gonzalez & Woods, Exemplo 3.6, p.142**
+  "Histogram equalization showed significant improvement" em faixas limitadas
+- **Szeliski, Computer Vision 2e, Seção 3.1.4, p.141**
+  "Automatically determine best values" para brilho/contraste otimais
+- **Bishop, C.M. (2006). Pattern Recognition and Machine Learning**
+  Z-score normalization para ML preprocessing
 
-- Padronização de imagens com diferentes faixas dinâmicas
-- Pré-processamento para algoritmos de Machine Learning  
-- Melhoria de contraste quando imagem não usa toda a faixa [0-255]
-- Normalização para comparação entre imagens
+🧮 **TÉCNICAS DE NORMALIZAÇÃO:**
 
-Tipos de Normalização:
-- Linear: Mapeamento proporcional para novo range
-- Min-Max: Expansão para usar toda faixa disponível
-- Z-Score: Normalização estatística (média=0, desvio=1)
-- Percentile: Baseada em percentis para robustez
+**1. Min-Max (Linear Scaling):**
+```
+f'(x,y) = (f(x,y) - min) × (novo_max - novo_min) / (max - min) + novo_min
+```
 
-Referências:
-- Gonzalez & Woods, Digital Image Processing, Sec. 3.3
-- Jain, A.K. (1989). Fundamentals of Digital Image Processing
-- Bishop, C.M. (2006). Pattern Recognition and Machine Learning
+**2. Histogram Equalization (Eq.3-15):**
+```
+s_k = T(r_k) = (L-1) × Σ(j=0 to k) p_r(r_j)
+```
+
+**3. Z-Score Normalization:**
+```
+f'(x,y) = (f(x,y) - μ) / σ
+```
+
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Dynamic range expansion**: "Use toda faixa disponível [0-255]" (G&W p.142)
+- **ML preprocessing**: Padronização para convergência de algoritmos
+- **Image comparison**: Normalização entre diferentes aquisições
+- **Contrast enhancement**: "Significant improvement" em imagens com faixa limitada
+
+⚠️ **LIMITAÇÕES IDENTIFICADAS:**
+- **Noise amplification**: Equalização pode realçar ruído (G&W p.152)
+- **Washed-out appearance**: Em imagens com pixels concentrados (G&W p.150)
+- **Local vs. Global**: Equalização local revela mais detalhes (33×33 neighborhoods)
 """
 
 import numpy as np

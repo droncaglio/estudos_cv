@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Read(//mnt/e/**)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "mcp__n8n__cv_base"
     ],
     "deny": [],
     "ask": []

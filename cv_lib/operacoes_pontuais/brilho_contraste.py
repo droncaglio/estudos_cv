@@ -2,29 +2,39 @@
 """
 💡 Transformações Lineares: Brilho e Contraste
 
-Implementa a transformação pontual mais fundamental:
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Szeliski, Computer Vision 2e, Seção 3.1.1, p.137**
+  "Pixel transforms" - operações ponto-a-ponto g(i,j) = h(f(i,j))
+- **Gonzalez & Woods, Digital Image Processing 4e, Seção 3.2.1**
+  "Linear intensity transformations" - transformações básicas de intensidade
+- **Crane, R. (1997). A Simplified Approach to Image Processing**
+  Definição clássica de "point processes"
+
+🧮 **FÓRMULA MATEMÁTICA FUNDAMENTAL:**
 f(x,y) = α × g(x,y) + β
 
 Onde:
-- α = contraste (inclinação da reta)
-- β = brilho (deslocamento vertical)
-- g(x,y) = pixel original
-- f(x,y) = pixel resultante
+- α = contraste (gain) - inclinação da função linear
+- β = brilho (bias) - deslocamento vertical
+- g(x,y) = intensidade do pixel original
+- f(x,y) = intensidade do pixel resultante
 
-Interpretação Gráfica:
-- Gráfico entrada vs. saída mostra uma reta
-- Inclinação da reta = contraste
-- Intercepto no eixo Y = brilho
+📈 **INTERPRETAÇÃO GRÁFICA (Szeliski p.137):**
+- **Função linear**: Gráfico entrada vs. saída é uma reta
+- **Inclinação**: Determina contraste (α)
+- **Intercepto Y**: Determina brilho (β)
+- **Domínio**: [0,255] → **Range**: [0,255] com clipping
 
-Aplicações:
-- Correção de imagens muito escuras ou claras
-- Melhoria de visualização em monitores  
-- Pré-processamento para algoritmos de detecção
-- Ajuste artístico de fotografias
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Brightness scaling**: Correção de imagens subexpostas/superexpostas
+- **Image addition**: Combinação linear de múltiplas imagens
+- **Display adjustment**: Calibração para diferentes monitores
+- **Preprocessing**: Normalização antes de algoritmos de visão
 
-Referências:
-- Gonzalez & Woods, Digital Image Processing, Sec. 3.2
-- Pratt, W.K. (2007). Digital Image Processing, 4th Ed
+⚙️ **PARÂMETROS TÍPICOS:**
+- α ∈ [0.5, 3.0]: Range prático de contraste
+- β ∈ [-100, +100]: Range típico de brilho
+- Clipping necessário para manter [0,255]
 """
 
 import numpy as np
@@ -34,19 +44,25 @@ from ..utils.validacao import validar_imagem_rgb, validar_parametro_numerico, ga
 def ajustar_brilho_contraste(imagem, brilho=0, contraste=1.0):
     """
     Aplica transformação linear de brilho e contraste.
-    
+
+    📚 **Referência:** Szeliski, Computer Vision 2e, Seção 3.1.1, p.137
+                      "Pixel transforms: g(i,j) = h(f(i,j))"
+
+    🧮 **Fórmula:** f(x,y) = α × g(x,y) + β
+       onde α=contraste, β=brilho, g=entrada, f=saída
+
     Args:
         imagem: Array NumPy da imagem (escala de cinza ou RGB)
-        brilho: Valor adicionado a cada pixel (-255 a +255)
-            - β > 0: Imagem mais clara (desloca para cima)
-            - β < 0: Imagem mais escura (desloca para baixo)
-            - β = 0: Sem mudança de brilho
-        contraste: Fator multiplicativo (≥ 0.0)
-            - α > 1: Aumenta contraste (diferenças amplificadas)
-            - α = 1: Contraste original (sem mudança)
-            - 0 < α < 1: Diminui contraste (diferenças reduzidas)
+        brilho: Valor β adicionado a cada pixel (validado: -255 a +255)
+            - β > 0: Deslocamento para cima (mais claro)
+            - β < 0: Deslocamento para baixo (mais escuro)
+            - β = 0: Sem alteração de brilho
+        contraste: Fator α multiplicativo (validado: ≥ 0.0)
+            - α > 1: Amplifica diferenças (mais contraste)
+            - α = 1: Preserva contraste original
+            - 0 < α < 1: Reduz diferenças (menos contraste)
             - α = 0: Imagem uniforme (todos pixels = β)
-            
+
     Returns:
         np.ndarray: Imagem transformada dtype uint8
         

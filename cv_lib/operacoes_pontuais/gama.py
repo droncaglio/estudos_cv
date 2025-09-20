@@ -2,30 +2,40 @@
 """
 🌊 Correção Gama - Transformação Power-Law
 
-Implementa transformações não-lineares do tipo:
-f(x,y) = c × [g(x,y) / 255]^γ × 255
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Gonzalez & Woods, Digital Image Processing 4e, Cap.3, Eq.3-5, p.128**
+  "Power-law transformations are useful for general-purpose contrast manipulation"
+- **Szeliski, Computer Vision 2e, Seção 3.1.1, p.137**
+  "Point processes" - transformações pixel-a-pixel independentes
+- **Poynton, C. (2003). Digital Video and HDTV Algorithms**
+  Correção gama para dispositivos de exibição
+
+🧮 **FÓRMULA MATEMÁTICA (Eq.3-5, Gonzalez & Woods):**
+s = c × r^γ
 
 Onde:
-- γ (gamma) = exponente que controla a curvatura
+- s = intensidade de saída [0-255]
+- r = intensidade de entrada normalizada [0-1]
 - c = constante multiplicativa (normalmente 1.0)
-- g(x,y) = pixel original normalizado
-- f(x,y) = pixel resultante
+- γ = exponente que controla a curvatura
 
-Comportamento da Função Power-Law:
+📈 **COMPORTAMENTO DA FUNÇÃO POWER-LAW:**
 - γ < 1: Curva côncava (expande tons escuros, clareia sombras)
 - γ = 1: Linear (sem alteração)
 - γ > 1: Curva convexa (comprime tons claros, escurece highlights)
 
-Aplicações:
-- Correção de gama de monitores (CRT vs LCD)
-- Ajuste de imagens em condições de pouca luz
-- Realce de detalhes em sombras ou highlights
-- Simulação de resposta não-linear do olho humano
+🎯 **APLICAÇÕES CITADAS NA LITERATURA:**
+- **Correção de gama de monitores** (γ ≈ 2.5 típico de CRT)
+- **Realce médico** para imagens de ressonância magnética (Exemplo 3.1, p.128)
+- **Ajuste de contraste** em imagens predominantemente escuras
+- **Simulação de resposta não-linear** do sistema visual humano
 
-Referências:
-- Gonzalez & Woods, Digital Image Processing, Sec. 3.2.4
-- Poynton, C. (2003). Digital Video and HDTV Algorithms
-- ITU-R BT.709: Parameter Values for HDTV Standards
+📊 **VALORES TÍPICOS MENCIONADOS:**
+- γ = 0.4: Expansão dramática de tons escuros (imagens médicas)
+- γ = 0.6: Correção de monitores muito escuros
+- γ = 1.0: Transformação identidade
+- γ = 2.2: Correção padrão para monitores CRT
+- γ = 2.5: Valor típico encontrado em monitores não calibrados
 """
 
 import numpy as np
@@ -35,39 +45,38 @@ from ..utils.validacao import validar_parametro_numerico, garantir_uint8
 def correcao_gama(imagem, gama=1.0, c=1.0):
     """
     Aplica correção gama (power-law transformation).
-    
+
+    📚 **Referência:** Gonzalez & Woods, Digital Image Processing 4e,
+                      Cap.3, Eq.3-5, p.128 - "Power-law transformations"
+
+    🧮 **Fórmula Matemática:** s = c × r^γ
+       onde s=saída, r=entrada[0-1], c=constante, γ=exponente
+
     Args:
         imagem: Array NumPy da imagem
-        gama: Exponente da transformação
-            - γ < 1: Imagem mais clara (expande tons escuros)
-                * 0.4-0.7: Correção para monitores muito escuros
-                * 0.5: Clareamento moderado
-            - γ = 1: Sem alteração (transformação linear)  
-            - γ > 1: Imagem mais escura (comprime tons claros)
-                * 1.5-2.2: Correção padrão para monitores
-                * 2.2: Gama típico de monitores CRT
-                * 3.0+: Escurecimento dramático
-        c: Constante multiplicativa (normalmente 1.0)
-        
+        gama: Exponente da transformação (validado: 0.1-5.0)
+            - γ < 1: Expande tons escuros (curva côncava)
+                * 0.4: Realce dramático de sombras (Exemplo 3.1, p.128)
+                * 0.6: Correção de monitores escuros
+            - γ = 1: Transformação identidade (linear)
+            - γ > 1: Comprime tons claros (curva convexa)
+                * 2.2: Correção padrão de monitores CRT
+                * 2.5: Gama típico de monitores não calibrados
+        c: Constante multiplicativa (padrão 1.0, validado: 0.1-5.0)
+
     Returns:
         np.ndarray: Imagem corrigida dtype uint8
-        
-    Fórmula: f(x,y) = c × [g(x,y)/255]^γ × 255
-    
-    Aplicações por Valor de Gama:
-        - γ = 0.4: Imagens muito escuras, realce de sombras
-        - γ = 0.7: Correção suave de subexposição
-        - γ = 1.0: Sem correção (identidade)
-        - γ = 1.5: Correção suave de superexposição
-        - γ = 2.2: Correção padrão de monitores CRT
-        - γ = 3.0: Escurecimento dramático, realce de highlights
-        
-    Quando Usar:
-        - Monitor muito escuro → γ < 1 (clareia)
-        - Monitor muito claro → γ > 1 (escurece)
-        - Realçar detalhes em sombras → γ < 1
-        - Realçar detalhes em highlights → γ > 1
-        - Simular filme fotográfico → γ ≈ 2.2
+
+    📈 **Aplicações Acadêmicas Citadas:**
+        - **Correção de gama de dispositivos** (monitores CRT γ≈2.5)
+        - **Realce médico** em imagens de ressonância magnética
+        - **Expansão de tons escuros** em imagens subexpostas
+        - **Simulação de resposta visual** não-linear humana
+
+    ⚠️ **Implementação:**
+       - Normalização [0-1] para evitar overflow
+       - Clipping para prevenir valores inválidos
+       - Proteção contra divisão por zero (ε=1e-7)
     """
     # Validações
     validar_parametro_numerico(gama, "gama", 0.1, 5.0)

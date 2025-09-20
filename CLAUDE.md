@@ -107,6 +107,56 @@ Every notebook must follow this pedagogical structure:
 - **Modular structure**: Keep implementations in `cv_lib/`, experiments in `notebooks/`
 - **Portuguese-first**: All documentation, comments, and explanations in Portuguese
 
+## 📚 CONSULTA OBRIGATÓRIA À BASE CV
+
+**REGRA FUNDAMENTAL:** Antes de implementar QUALQUER conceito novo de visão computacional:
+
+### 1. 🔍 PESQUISA OBRIGATÓRIA
+```
+SEMPRE use a tool mcp__n8n__cv_base para pesquisar teoria:
+- Conceitos fundamentais
+- Fórmulas matemáticas
+- Aplicações práticas
+- Valores de parâmetros típicos
+```
+
+### 2. 📖 DOCUMENTAÇÃO ACADÊMICA OBRIGATÓRIA
+Todo código deve incluir referências específicas:
+```python
+"""
+Função: [Nome da Operação]
+
+📚 **Referência:** [Autor], [Livro], [Edição], [Capítulo], [Equação], [Página]
+                  [Citação direta relevante]
+
+🧮 **Fórmula Matemática:** [Equação exata da literatura]
+    onde [definição de cada variável]
+
+🎯 **Aplicações Citadas:** [Usos mencionados na literatura]
+🔢 **Parâmetros Típicos:** [Valores sugeridos pelos autores]
+⚠️ **Implementação:** [Considerações técnicas importantes]
+"""
+```
+
+### 3. 📚 FONTES ACADÊMICAS PRIORITÁRIAS
+1. **Gonzalez & Woods** - Digital Image Processing 4e
+2. **Szeliski** - Computer Vision: Algorithms and Applications 2e
+3. **Gonzalez, Woods & Eddins** - Digital Image Processing Using MATLAB 2e
+
+### 4. ✅ VALIDAÇÃO OBRIGATÓRIA
+- Verificar fórmulas contra literatura acadêmica
+- Confirmar ranges de parâmetros citados
+- Incluir exemplos de aplicação mencionados
+- Referenciar números de página e equações específicas
+
+### 5. 🚫 NUNCA IMPLEMENTAR SEM:
+- Pesquisar primeiro na base CV
+- Documentar referências específicas
+- Validar contra fontes acadêmicas
+- Incluir citações diretas relevantes
+
+**Objetivo:** Garantir que toda implementação seja 100% fundamentada academicamente com referências rastreáveis.
+
 ## Curriculum Coverage
 
 The project systematically covers CV fundamentals through advanced topics:

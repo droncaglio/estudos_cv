@@ -2,24 +2,35 @@
 """
 📺 Conversões RGB ↔ YCbCr (Luminância + Crominância)
 
-YCbCr separa informação de brilho (Y) da informação de cor (Cb, Cr),
-fundamental para compressão de vídeo e TV digital.
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Szeliski, Computer Vision 2e, Eq.2.116, p.123**
+  Matriz JPEG completa para YCbCr com offset +128
+- **Szeliski, Computer Vision 2e, Seção 2.3.3, p.122-123**
+  "YCbCr is closely related to YUV but uses different scale factors"
+- **ITU-R BT.601**: Studio Encoding Parameters (base teórica)
+- **JPEG Standard (ISO/IEC 10918)**: Implementação para imagens
+- **Poynton, C. (2003). Digital Video and HDTV Algorithms**
 
-Componentes:
-- Y: Luminância (brilho) - similar ao que vemos em P&B
-- Cb: Crominância azul-amarelo (Blue-Yellow chroma)  
-- Cr: Crominância vermelho-verde (Red-Green chroma)
+🧮 **MATRIZ JPEG OFICIAL (Eq.2.116 Szeliski):**
+```
+[Y' ]   [0.299   0.587   0.114 ] [R']   [  0]
+[Cb] = [-0.168736 -0.331264 0.5  ] [G'] + [128]
+[Cr]   [0.5   -0.418688 -0.081312] [B']   [128]
+```
 
-Aplicações:
-- Compressão JPEG/MPEG (reduz resolução Cb/Cr)
-- TV digital e broadcasting
-- Detecção de pele (componentes Cb/Cr robustas)
-- Processamento independente de luminância e cor
+💡 **COMPONENTES:**
+- **Y**: Luminância (luma) - informação de brilho, compatível com P&B
+- **Cb**: Crominância azul-amarelo (Blue-Yellow chroma difference)
+- **Cr**: Crominância vermelho-verde (Red-Green chroma difference)
 
-Referências:
-- ITU-R BT.601: Studio Encoding Parameters
-- JPEG Standard (ISO/IEC 10918)
-- Poynton, C. (2003). Digital Video and HDTV
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Compressão JPEG/MPEG**: Subsample Cb/Cr (menor resolução)
+- **TV digital e broadcasting**: Compatibilidade com sistemas antigos
+- **Detecção de pele**: Componentes Cb/Cr robustas à iluminação
+- **Processamento independente**: Luminância vs. informação de cor
+
+⚠️ **OFFSET +128**: Centraliza crominância no range [0-255]
+pois Cb e Cr podem ser negativos na forma matemática original.
 """
 
 import numpy as np
@@ -29,26 +40,30 @@ from ..utils.validacao import validar_imagem_rgb, garantir_uint8
 def rgb_para_ycbcr(imagem_rgb):
     """
     Converte imagem RGB para espaço de cor YCbCr (luminância + crominância).
-    
+
+    📚 **Referência:** Szeliski, Computer Vision 2e, Eq.2.116, p.123
+                      "JPEG standard uses the full eight-bit range"
+
+    🧮 **Matriz JPEG (Eq.2.116):**
+    Y  = 0.299*R + 0.587*G + 0.114*B + 0
+    Cb = -0.168736*R - 0.331264*G + 0.5*B + 128
+    Cr = 0.5*R - 0.418688*G - 0.081312*B + 128
+
     Args:
         imagem_rgb: Array RGB shape (altura, largura, 3)
-        
+
     Returns:
         np.ndarray: Imagem YCbCr shape (altura, largura, 3) dtype uint8
-    
-    Fórmulas ITU-R BT.601:
-        Y  = 0.299*R + 0.587*G + 0.114*B      (luminância)
-        Cb = -0.169*R - 0.331*G + 0.500*B + 128  (azul-amarelo)
-        Cr = 0.500*R - 0.419*G - 0.081*B + 128   (vermelho-verde)
-    
-    Por que +128? Para centralizar os valores de crominância no meio 
-    do range [0-255], já que Cb e Cr podem ser negativos.
-    
-    Aplicações:
-        - Compressão de vídeo/imagem (JPEG subsample Cb/Cr)
-        - Separação de luminância e cor para processamento independente
-        - TV digital e broadcasting
-        - Detecção de pele humana (usando componentes Cb/Cr)
+
+    💡 **Offset +128 Explicado (Szeliski p.123):**
+    Centraliza crominância no range [0-255] pois Cb/Cr são
+    matematicamente bipolares (podem ser negativos).
+
+    🎯 **Aplicações Citadas:**
+        - **JPEG compression**: Subsample Cb/Cr para menor tamanho
+        - **Skin detection**: Cb/Cr robustas a mudanças de iluminação
+        - **Broadcasting**: Compatibilidade com sistemas P&B legados
+        - **Independent processing**: Luminância separada da cor
     """
     altura, largura, canais = validar_imagem_rgb(imagem_rgb, "imagem_rgb")
     imagem_ycbcr = np.zeros((altura, largura, 3), dtype=np.float64)
@@ -57,10 +72,10 @@ def rgb_para_ycbcr(imagem_rgb):
         for x in range(largura):
             r, g, b = imagem_rgb[y, x, 0], imagem_rgb[y, x, 1], imagem_rgb[y, x, 2]
             
-            # Calcula componentes YCbCr usando fórmulas ITU-R BT.601
+            # Calcula componentes YCbCr usando fórmulas JPEG Standard (precisão aprimorada)
             Y = 0.299 * r + 0.587 * g + 0.114 * b
-            Cb = -0.169 * r - 0.331 * g + 0.500 * b + 128
-            Cr = 0.500 * r - 0.419 * g - 0.081 * b + 128
+            Cb = -0.168736 * r - 0.331264 * g + 0.5 * b + 128
+            Cr = 0.5 * r - 0.418688 * g - 0.081312 * b + 128
             
             imagem_ycbcr[y, x] = [Y, Cb, Cr]
 
@@ -160,10 +175,10 @@ def extrair_crominancia(imagem_rgb, componente='cb'):
             
             if componente == 'cb':
                 # Cb: Crominância azul-amarelo
-                valor = -0.169 * r - 0.331 * g + 0.500 * b + 128
+                valor = -0.168736 * r - 0.331264 * g + 0.5 * b + 128
             else:  # componente == 'cr'
-                # Cr: Crominância vermelho-verde  
-                valor = 0.500 * r - 0.419 * g - 0.081 * b + 128
+                # Cr: Crominância vermelho-verde
+                valor = 0.5 * r - 0.418688 * g - 0.081312 * b + 128
                 
             crominancia[y, x] = valor
     
@@ -185,6 +200,6 @@ def obter_coeficientes_ycbcr():
     """
     return {
         'Y': {'R': 0.299, 'G': 0.587, 'B': 0.114},
-        'Cb': {'R': -0.169, 'G': -0.331, 'B': 0.500, 'offset': 128},
-        'Cr': {'R': 0.500, 'G': -0.419, 'B': -0.081, 'offset': 128}
+        'Cb': {'R': -0.168736, 'G': -0.331264, 'B': 0.5, 'offset': 128},
+        'Cr': {'R': 0.5, 'G': -0.418688, 'B': -0.081312, 'offset': 128}
     }

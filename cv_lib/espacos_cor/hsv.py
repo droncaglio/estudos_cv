@@ -2,26 +2,37 @@
 """
 🎨 Conversões RGB ↔ HSV (Hue, Saturation, Value)
 
-HSV representa cores de forma intuitiva para manipulação artística:
-- H: Hue (Matiz) - a cor em si (0-360° na roda de cores)
-- S: Saturation (Saturação) - pureza/intensidade da cor (0-100%)
-- V: Value (Valor/Brilho) - quão clara/escura é a cor (0-100%)
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Szeliski, Computer Vision 2e, p.123**
+  "HSV is a projection of the RGB color cube onto a non-linear chroma angle"
+- **Gonzalez & Woods, Digital Image Processing 4e, Seção 6.2, p.414**
+  Conceptual relationships between RGB and HSI color models
+- **Hall, R. (1989). Illumination and Color in Computer Generated Imagery**
+  Exact formulas for HSV conversion
+- **Hughes, van Dam et al. (2013). Computer Graphics: Principles and Practice**
+  HSV color wheel implementation
 
-Vantagens sobre RGB:
-- Seleção por cor mais robusta que RGB
-- Menos sensível a mudanças de iluminação
-- Ajustes artísticos intuitivos (saturação sem afetar cor)
-- Melhor para segmentação baseada em cor
+🧮 **DEFINIÇÃO MATEMÁTICA (Szeliski p.123):**
+- **Hue**: "Direction around a color wheel" - ângulo na roda de cores [0-360°]
+- **Saturation**: "Scaled distance from the diagonal" - pureza da cor [0-100%]
+- **Value**: "Mean or maximum color value" - intensidade/brilho [0-100%]
 
-Aplicações:
-- Detecção de objetos coloridos (bolas, carros, etc.)
-- Segmentação baseada em cor
-- Aplicações de realidade aumentada  
-- Interfaces de seleção de cor
+📐 **PROJEÇÃO CILÍNDRICA (Gonzalez & Woods p.414):**
+O cubo RGB é projetado em coordenadas cilíndricas:
+- **Eixo vertical**: Intensidade (V) - do preto ao branco
+- **Ângulo**: Hue (H) - posição na roda de cores (0°=vermelho)
+- **Raio**: Saturation (S) - distância do eixo central
 
-Referências:
-- Smith, A.R. (1978). Color Gamut Transform Pairs
-- Foley & van Dam, Computer Graphics: Principles and Practice
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Color picking**: "Approximates the Munsell chart" (Szeliski p.123)
+- **Graphics applications**: Interface natural para seleção
+- **Segmentação por cor**: Separação H, S, V independentes
+- **Artistic adjustments**: Controle intuitivo de matiz e saturação
+
+🔄 **VANTAGENS SOBRE RGB:**
+- **Intuitive representation**: Mais próximo da percepção humana
+- **Color isolation**: Hue separado de intensidade
+- **Natural controls**: Ajustes independentes de cor e brilho
 """
 
 import numpy as np

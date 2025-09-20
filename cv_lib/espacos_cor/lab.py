@@ -2,27 +2,45 @@
 """
 🧠 Conversões RGB ↔ Lab (L*a*b* - Perceptualmente Uniforme)
 
-Lab é um espaço de cor perceptualmente uniforme, onde distâncias numéricas
-correspondem aproximadamente a diferenças visuais percebidas pelo olho humano.
+📚 **REFERÊNCIAS ACADÊMICAS:**
+- **Szeliski, Computer Vision 2e, Eq.2.106-2.107, p.117**
+  L* component definition e finite-slope approximation (δ=6/29)
+- **Gonzalez & Woods, Digital Image Processing 4e, p.421**
+  "Lab color space is colorimetric, perceptually uniform, and device independent"
+- **CIE (1976). Colorimetry - Official Recommendations**
+  Definição padrão internacional do espaço L*a*b*
+- **MacAdams, D.L. (1942). Visual sensitivities to color differences**
+  Base experimental para uniformidade perceptual
+- **Fairchild, M.D. (2013). Color Appearance Models, 3rd Ed**
 
-Componentes:
-- L: Lightness (Luminosidade) - 0 (preto absoluto) a 100 (branco absoluto)
-- a: Eixo verde-vermelho - negativo=verde, positivo=vermelho  
-- b: Eixo azul-amarelo - negativo=azul, positivo=amarelo
+🧮 **DEFINIÇÃO MATEMÁTICA (Eq.2.106-2.107 Szeliski):**
+```
+L* = 116f(Y/Yn) - 16
+a* = 500[f(X/Xn) - f(Y/Yn)]
+b* = 200[f(Y/Yn) - f(Z/Zn)]
 
-Processo de Conversão (OBRIGATÓRIO):
-RGB → Linear RGB → XYZ → Lab
+onde f(t) = { t^(1/3)           se t > δ³
+            { t/(3δ²) + 2δ/3    caso contrário
 
-Aplicações:
-- Correção de cor profissional
-- Comparação perceptual de cores (Delta E)
-- Impressão e reprodução de cores
-- Segmentação robusta por cor (menos sensível à iluminação)
+δ = 6/29 ≈ 0.206896 (constante CIE)
+```
 
-Referências:
-- CIE (1976). Colorimetry - Official Recommendations
-- Fairchild, M.D. (2013). Color Appearance Models, 3rd Ed
-- Hunt, R.W.G. (2004). The Reproduction of Colour, 6th Ed
+💡 **COMPONENTES PERCEPTUAIS:**
+- **L***: Lightness [0-100] - escala logarítmica de luminosidade
+- **a***: Eixo verde(-) ↔ vermelho(+) [-128,+127] aproximadamente
+- **b***: Eixo azul(-) ↔ amarelo(+) [-128,+127] aproximadamente
+
+🎯 **APLICAÇÕES ACADÊMICAS CITADAS:**
+- **Perceptual uniformity**: "Color differences are perceived uniformly" (G&W p.421)
+- **Delta E calculations**: Medição objetiva de diferenças de cor
+- **Device independence**: "Can represent accurately colors of any display" (G&W p.421)
+- **Image compression**: Desacoplamento eficiente de intensidade e cor
+
+🔄 **PROCESSO OBRIGATÓRIO (4 ETAPAS):**
+1. **sRGB → Linear RGB**: Remove gamma correction (~2.2)
+2. **Linear RGB → XYZ**: Transformação matricial (sRGB D65)
+3. **XYZ → Lab**: Funções não-lineares baseadas na percepção
+4. **Normalização**: Conversão para ranges uint8 convencionais
 """
 
 import numpy as np
@@ -272,24 +290,42 @@ def _aplicar_gamma_srgb(componente_linear):
 def _xyz_para_lab_componente(valor_xyz_normalizado):
     """
     Aplica função não-linear XYZ→Lab baseada na percepção humana.
-    
-    Constantes determinadas experimentalmente pela CIE para modelar
-    como o olho humano percebe diferenças de luminosidade.
+
+    Implementação conforme CIE padrão com δ = 6/29:
+    - Região cúbica: t^(1/3) para t > δ³
+    - Região linear: t/(3δ²) + 2δ/3 para t ≤ δ³
+
+    δ = 6/29 ≈ 0.206896 (constante CIE)
+    δ³ ≈ 0.008856 (threshold para mudança de função)
     """
-    if valor_xyz_normalizado > 0.008856:
-        return pow(valor_xyz_normalizado, 1/3)  # Região cúbica
+    delta = 6.0 / 29.0  # δ = 6/29 (constante CIE oficial)
+    delta_cubo = delta**3  # δ³ ≈ 0.008856
+
+    if valor_xyz_normalizado > delta_cubo:
+        return pow(valor_xyz_normalizado, 1.0/3.0)  # Região cúbica
     else:
-        return (7.787 * valor_xyz_normalizado + 16/116)  # Região linear
+        # Aproximação linear: t/(3δ²) + 2δ/3
+        return valor_xyz_normalizado / (3 * delta**2) + 2 * delta / 3
 
 
 def _lab_para_xyz_componente(f_componente):
     """
     Aplica função inversa Lab→XYZ (inversa da função acima).
+
+    Implementação conforme CIE padrão com δ = 6/29:
+    - Região cúbica: f³ para f³ > δ³
+    - Região linear: 3δ²(f - 2δ/3) para f³ ≤ δ³
     """
-    if f_componente**3 > 0.008856:
-        return f_componente**3
+    delta = 6.0 / 29.0  # δ = 6/29 (constante CIE oficial)
+    delta_cubo = delta**3  # δ³ ≈ 0.008856
+
+    f_cubo = f_componente**3
+
+    if f_cubo > delta_cubo:
+        return f_cubo  # Região cúbica
     else:
-        return (f_componente - 16/116) / 7.787
+        # Função linear inversa: 3δ²(f - 2δ/3)
+        return 3 * delta**2 * (f_componente - 2 * delta / 3)
 
 
 def obter_white_point_d65():
