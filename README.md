@@ -198,11 +198,14 @@ jupyter lab
 - [x] **Visualizações** - Curvas de transformação e histogramas
 - [x] **Análise quantitativa** - Estatísticas e comparações
 
-#### 1.4 Histogramas
-- [ ] **Cálculo de histogramas** - Distribuição de intensidades
-- [ ] **Equalização** - Melhoria de contraste
-- [ ] **Equalização adaptativa (CLAHE)** - Processamento local
-- [ ] **Especificação de histograma** - Matching
+#### 📔 [04-Histogramas.ipynb](notebooks/01%20-%20Fundamentos%20de%20Processamento%20de%20Imagens/04-Histogramas.ipynb) ✅
+- [x] **Cálculo de histogramas** - Implementação manual e NumPy (Gonzalez & Woods Eq.3-10)
+- [x] **Estatísticas descritivas** - Média, variância, entropia, percentis
+- [x] **Histogramas RGB** - Análise por canal de cor
+- [x] **Aplicações práticas** - Avaliação de qualidade, classificação
+- [x] **Equalização global** - Melhoria automática de contraste (G&W Eq.3-20)
+- [x] **CLAHE** - Equalização adaptativa com limitação de contraste (Szeliski Eq.3.10)
+- [x] **Especificação de histograma** - Histogram matching (G&W Eq.3-21 a 3-23)
 
 #### 1.5 Filtragem Espacial
 - [ ] **Convolução 2D** - Implementação manual
@@ -241,5 +244,5 @@ jupyter lab
 - [ ] **Segmentação** - U-Net, masks
 
 ---
-**📊 Status Geral: 25/60+ funcionalidades implementadas (~42% da ementa básica)**
-**📔 Notebooks Completos: 3/12 planejados (25% da estrutura curricular)**
+**📊 Status Geral: 32/60+ funcionalidades implementadas (~53% da ementa básica)**
+**📔 Notebooks Completos: 4/12 planejados (33% da estrutura curricular)**

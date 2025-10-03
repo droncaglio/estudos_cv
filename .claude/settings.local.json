@@ -5,7 +5,8 @@
       "Bash(python:*)",
       "mcp__n8n__cv_base",
       "Bash(find:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(jupyter nbconvert:*)"
     ],
     "deny": [],
     "ask": []
