@@ -207,11 +207,12 @@ jupyter lab
 - [x] **CLAHE** - Equalização adaptativa com limitação de contraste (Szeliski Eq.3.10)
 - [x] **Especificação de histograma** - Histogram matching (G&W Eq.3-21 a 3-23)
 
-#### 1.5 Filtragem Espacial
-- [ ] **Convolução 2D** - Implementação manual
-- [ ] **Filtros de suavização** - Média, Gaussiano
-- [ ] **Realce de bordas** - Sobel, Prewitt, Laplaciano
-- [ ] **Filtros customizados** - Kernels personalizados
+#### 📔 [05-Filtragem_Espacial.ipynb](notebooks/01%20-%20Fundamentos%20de%20Processamento%20de%20Imagens/05-Filtragem_Espacial.ipynb) ✅
+- [x] **Convolução 2D** - Implementação manual (Gonzalez & Woods Eq.3-35)
+- [x] **Filtros de suavização** - Média (Box) e Gaussiano (G&W Eq.3-45)
+- [x] **Operadores de gradiente** - Sobel e Prewitt para detecção de bordas (G&W Cap.10)
+- [x] **Laplaciano** - 2ª derivada para realce de detalhes (G&W Eq.3-51)
+- [x] **Unsharp masking** - Aguçamento controlado (G&W Eq.3-58)
 
 ### 2️⃣ Filtragem na Frequência
 - [ ] **Transformada de Fourier** - FFT 2D
@@ -244,5 +245,5 @@ jupyter lab
 - [ ] **Segmentação** - U-Net, masks
 
 ---
-**📊 Status Geral: 32/60+ funcionalidades implementadas (~53% da ementa básica)**
-**📔 Notebooks Completos: 4/12 planejados (33% da estrutura curricular)**
+**📊 Status Geral: 37/60+ funcionalidades implementadas (~62% da ementa básica)**
+**📔 Notebooks Completos: 5/12 planejados (42% da estrutura curricular)**
