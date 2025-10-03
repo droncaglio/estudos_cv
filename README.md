@@ -66,8 +66,32 @@ O foco principal é **construir entendimento profundo** dos conceitos fundamenta
 **Referências principais:**
 - **Gonzalez, R. C.; Woods, R. E.** – *Digital Image Processing*. Pearson, 4ª ed. (2018)
 - **Szeliski, R.** – *Computer Vision: Algorithms and Applications*. Springer, 2ª ed. (2022) [Acesso aberto]
+- **Gonzalez, R. C.; Woods, R. E.; Eddins, S. L.** – *Digital Image Processing Using MATLAB*. Gatesmark Publishing, 2ª ed. (2009)
 - **Goodfellow, I.; Bengio, Y.; Courville, A.** – *Deep Learning*. MIT Press (2016) [Online gratuito]
 - **Bishop, C. M.** – *Pattern Recognition and Machine Learning*. Springer (2006)
+
+### 🔍 Metodologia de Pesquisa Acadêmica
+
+Este projeto utiliza **ferramentas MCP (Model Context Protocol)** para garantir que todas as implementações sejam fundamentadas academicamente:
+
+**🎯 Base de Conhecimento CV (OBRIGATÓRIA):**
+- **Tool**: `mcp__cv-books__cv_base`
+- **Função**: Consulta direta aos livros de referência acadêmica
+- **Uso**: SEMPRE consultar ANTES de implementar qualquer conceito novo
+- **Retorna**: Fórmulas exatas, equações numeradas, páginas específicas, parâmetros típicos
+
+**📚 Wikipedia API (COMPLEMENTAR):**
+- **Tool**: `mcp__cv-books__wikipedia-api`
+- **Função**: Contexto geral e introdutório
+- **Uso**: Complementar informações da base principal quando necessário
+- **Retorna**: Conceitos básicos, histórico, aplicações, recursos visuais
+
+**✅ Garantia de Qualidade Acadêmica:**
+- Toda implementação é precedida de pesquisa nas fontes primárias
+- Código documentado com referências específicas (autor, livro, página, equação)
+- Fórmulas matemáticas exatas da literatura
+- Parâmetros validados contra valores citados pelos autores
+- Rastreabilidade completa das fontes
 
 ## 🏗️ Estrutura do Projeto
 

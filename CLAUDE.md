@@ -113,11 +113,26 @@ Every notebook must follow this pedagogical structure:
 
 ### 1. 🔍 PESQUISA OBRIGATÓRIA
 ```
-SEMPRE use a tool mcp__n8n__cv_base para pesquisar teoria:
-- Conceitos fundamentais
-- Fórmulas matemáticas
-- Aplicações práticas
-- Valores de parâmetros típicos
+SEMPRE use as seguintes tools MCP para pesquisar teoria ANTES de implementar:
+
+1. mcp__cv-books__cv_base - BASE PRINCIPAL (OBRIGATÓRIA)
+   - Consulta aos livros acadêmicos de referência
+   - Conceitos fundamentais
+   - Fórmulas matemáticas exatas
+   - Aplicações práticas
+   - Valores de parâmetros típicos
+   - Equações numeradas e páginas específicas
+
+2. mcp__cv-books__wikipedia-api - COMPLEMENTAR (Opcional)
+   - Contexto geral e introdutório
+   - Conceitos básicos
+   - Histórico e aplicações
+   - Recursos visuais e diagramas
+
+FLUXO OBRIGATÓRIO:
+1º - Pesquisar em mcp__cv-books__cv_base (livros acadêmicos)
+2º - Se necessário, complementar com wikipedia-api
+3º - Documentar TODAS as referências encontradas
 ```
 
 ### 2. 📖 DOCUMENTAÇÃO ACADÊMICA OBRIGATÓRIA
